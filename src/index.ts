@@ -17,11 +17,11 @@ const monster2 = new Dragon();
 const pvp = new PVP(player2, player3);
 const pve = new PVE(player1, [monster1, monster2]);
 
-function runBattles(battles: Battle[]) {
+const runBattles = (battles: Battle[]) => {
   for (let index = 0; index < battles.length; index += 1) {
     battles[index].fight();
   }
-}
+};
 
 export { player1, player2, player3 };
 export { monster1, monster2 };
