@@ -5,26 +5,25 @@ import Race, { Elf } from './Races';
 
 export default class Character implements Fighter {
   private _lifePoints: number;
-  private readonly _strength: number;
-  private readonly _defense: number;
-  private readonly _dexterity: number;
-  private readonly _energy: Energy;
+  private _strength: number;
+  private _defense: number;
+  private _dexterity: number;
+  private _energy: Energy;
   private _maxLifePoints: number;
   private readonly _archetype: Archetype;
   private readonly _race: Race;
-  static lifePoints: number;
 
   constructor(name: string) {
-    this._dexterity = Math.floor(Math.random() * 10);
+    this._dexterity = Math.floor((Math.random() * 9) + 1);
     this._race = new Elf(name, this._dexterity);
     this._archetype = new Mage(name);
     this._maxLifePoints = (this._race.maxLifePoints) / 2;
     this._lifePoints = this._maxLifePoints;
-    this._strength = Math.floor(Math.random() * 10);
-    this._defense = Math.floor(Math.random() * 10);
+    this._strength = Math.floor((Math.random() * 9) + 1);
+    this._defense = Math.floor((Math.random() * 9) + 1);
     this._energy = {
       type_: this._archetype.energyType,
-      amount: Math.floor(Math.random() * 10),
+      amount: Math.floor((Math.random() * 9) + 1),
     };
   }
 
@@ -38,28 +37,38 @@ export default class Character implements Fighter {
     return { type_: this._energy.type_, amount: this._energy.amount };
   }
 
-  // set lifePoints(damage: number): void { this._lifePoints -= damage; }
-
-  attack(enemy: Fighter): void {
-    console.log(this.attack(enemy));
-  }
-
   special(enemy: Fighter): void {
     console.log(this.special(enemy));
   }
 
-  levelUp(): void {
-    console.log(this.levelUp);
+  receiveDamage(attackPoints: number): number {
+    const damage = this._defense - attackPoints;
+    const status = this._lifePoints < (damage * -1) ? 'dead' : 'alive';
+    if (status === 'dead') this._lifePoints = -1;
+    if (damage > 0 && status === 'alive') {
+      this._lifePoints += damage;
+      return this._lifePoints;
+    }
+    return this.lifePoints;
   }
 
-  receiveDamage(attackPoints: number): number {
-    const damage = attackPoints - this.defense;
-    let status = 'alive';
-    const health = this.lifePoints;
-    if (this.lifePoints < damage) status = 'dead';
-    if (damage > 0 && status === 'alive') {
-      Character.lifePoints -= damage;
+  attack(enemy: Fighter) {
+    enemy.receiveDamage(this._strength);
+  }
+
+  levelUp(): void {
+    this._energy.amount = 10;
+    this._strength += Math.floor((Math.random() * 9) + 1);
+    this._dexterity += Math.floor((Math.random() * 9) + 1);
+    this._defense += Math.floor((Math.random() * 9) + 1);
+    const hpPlus = Math.floor((Math.random() * 9) + 1);
+    if (
+      this._maxLifePoints + hpPlus
+      > this.race.maxLifePoints) {
+      this._maxLifePoints = this.race.maxLifePoints;
+    } else {
+      this._maxLifePoints += hpPlus;
     }
-    return health;
+    this._lifePoints = this._maxLifePoints;
   }
 }
