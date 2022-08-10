@@ -42,11 +42,11 @@ export default class Character implements Fighter {
   }
 
   receiveDamage(attackPoints: number): number {
-    const damage = this._defense - attackPoints;
-    const status = this._lifePoints < (damage * -1) ? 'dead' : 'alive';
+    const damage = attackPoints - this._defense;
+    const status = this._lifePoints < damage ? 'dead' : 'alive';
     if (status === 'dead') this._lifePoints = -1;
     if (damage > 0 && status === 'alive') {
-      this._lifePoints += damage;
+      this._lifePoints -= damage;
       return this._lifePoints;
     }
     return this.lifePoints;
